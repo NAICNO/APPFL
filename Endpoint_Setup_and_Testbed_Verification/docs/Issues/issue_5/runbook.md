@@ -56,3 +56,34 @@ root
 mkdir -v /home/flamby_svc
 # > mkdir: cannot create directory ‘/home/flamby_svc’: Permission denied
 ```
+
+## Creating `flamby_svc` service account via `hrothmund`
+
+```bash
+## Extend the root logical volume
+lvextend -r -l +75%FREE /dev/internvg/root
+
+df -h /
+  ## Filesystem                 Size  Used Avail Use% Mounted on
+  ## /dev/mapper/internvg-root   69G  4.4G   64G   7% /
+
+## Creating a directory for local service-account homes
+mkdir /local_home
+
+## Creating a service account
+useradd -r -s /usr/sbin/nologin -d /local_home/flamby_svc -m flamby_svc
+chown -R flamby_svc:flamby_svc /local_home/flamby_svc
+
+## Search service account record
+grep '^flamby_svc:' /etc/passwd
+
+## Switches to flamby_svc - overriding its configured shell with /bin/bash
+su -s /bin/bash - flamby_svc
+echo $USER
+
+  ## flamby_svc
+```
+
+## Install Miniconda via EasyBuild
+
+- Follow instructions in [conda in Lightweight HPC](../issue_3/runbook.md)
